@@ -1,45 +1,90 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Text, XStack, YStack } from "tamagui";
+import { Tabs } from "expo-router";
+import MCIcon from "@expo/vector-icons/MaterialCommunityIcons";
+import Header from "@/components/Shared/header/Header";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+interface Tab {
+  name: string;
+  icon: "home-outline" | "account-outline" | "cart-check";
+}
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function TabsLayout() {
+  const tabs: Tab[] = [
+    {
+      name: "index",
+      icon: "home-outline",
+    },
+    {
+      name: "profile",
+      icon: "account-outline",
+    },
+    {
+      name: "cart",
+      icon: "cart-check",
+    },
+  ];
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
+    <Tabs>
+      {tabs.map((tab) => (
+        <Tabs.Screen
+          key={tab.name}
+          name={tab.name}
+          options={{
+            tabBarStyle: {
+              borderTopWidth: 1,
+              borderTopColor: "Lightgray",
+            },
+            // TODO: custome header
+            header: (props) => <Header {...props} />,
+            tabBarLabel: () => null,
+            tabBarIcon: ({ focused }: { focused: boolean }) => (
+              <YStack
+                style={{
+                  flex: 1,
+                  marginTop: -5,
+                  gap: 10,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <XStack
+                  w={50}
+                  h={4}
+                  style={{
+                    borderRadius: 20,
+                    backgroundColor: focused ? "#238db0" : "$colorTransparent",
+                  }}
+                />
+                {/* TODO: Add icon */}
+                <MCIcon
+                  type="MaterialCommunityIcons"
+                  name={tab.icon}
+                  size={30}
+                  color={focused ? "#238db0" : "$black"}
+                />
+                {/* TODO: Items.length */}
+                {tab.name === "cart" && (
+                  <Text
+                    px={4}
+                    style={{
+                      borderRadius: 10,
+                      position: "absolute",
+                      top: 11,
+                      fontWeight: "bold",
+                      fontSize: 12,
+                      color: focused ? "#238db0" : "black",
+                    }}
+                    bg={"white"}
+                  >
+                    3
+                  </Text>
+                )}
+              </YStack>
+            ),
+          }}
+        ></Tabs.Screen>
+      ))}
     </Tabs>
   );
 }
