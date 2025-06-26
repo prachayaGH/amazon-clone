@@ -1,9 +1,10 @@
 import { Form, Label, Text, YStack, XStack, Input, Checkbox } from "tamagui";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Pressable } from "react-native";
+import { Dimensions, Pressable, Alert } from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
 import DefaultButton from "@/components/DefaultButton";
+import { supabase } from "@/components/supabase";
 
 enum Step {
   "EMAIL" = 1,
@@ -20,8 +21,20 @@ export default function Login() {
 
   const onGoBack = () => router.back();
 
-  function register() {}
-  function login() {}
+  function register() {
+    supabase.auth.signUp({ email, password })
+    .then(onGoBack)
+    .catch(err => Alert.alert("Error", err.message))
+  }
+
+  function login() {
+    supabase.auth.signInWithPassword({ email, password})
+    .then(({ error }) => {
+      if (error) return register();
+      else onGoBack();
+    })
+    .catch(register)
+  }
 
   useEffect(() => {
     navigation.setOptions({
@@ -129,7 +142,7 @@ export default function Login() {
         <XStack gap={20}>
           {["Conditions of use", "Priacy Notice", "Help"].map((link,index) => (
             <Text
-              key={index}
+              key={link}
               fos={16}
               textDecorationLine="underline"
               col={"#146eb4"}
