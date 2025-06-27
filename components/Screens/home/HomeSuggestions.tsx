@@ -4,9 +4,8 @@ import { Dimensions } from "react-native";
 
 import IMG_AD_1 from "@/assets/home-sugg-1.png";
 import IMG_AD_2 from "@/assets/home-sugg-2.png";
-import IMG_AD_3 from "@/assets/home-sugg-1.png";
 
-const images = [IMG_AD_1, IMG_AD_2, IMG_AD_3];
+const images = [IMG_AD_1, IMG_AD_2, IMG_AD_1];
 
 export function HomeSuggestions() {
   return (
@@ -16,9 +15,9 @@ export function HomeSuggestions() {
             mt={-50}
             showsHorizontalScrollIndicator={false}
         >
-            {images.map((image, index) => (
+            {images.map((image) => (
                 <YStack
-                    key={index}
+                    key={image}
                     bg={"white"}
                     w={150}
                     h={200}
