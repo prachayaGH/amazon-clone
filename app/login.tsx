@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, Pressable, Alert } from "react-native";
 import Icon from "@expo/vector-icons/Ionicons";
 import DefaultButton from "@/components/DefaultButton";
-import { supabase } from "@/components/supabase";
+import { supabase } from "@/supabase";
 
 enum Step {
   "EMAIL" = 1,
@@ -140,7 +140,7 @@ export default function Login() {
 
       <YStack gap={20}>
         <XStack gap={20}>
-          {["Conditions of use", "Priacy Notice", "Help"].map((link,index) => (
+          {["Conditions of use", "Priacy Notice", "Help"].map((link) => (
             <Text
               key={link}
               fos={16}

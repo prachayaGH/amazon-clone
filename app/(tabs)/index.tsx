@@ -1,17 +1,22 @@
 import { router, useNavigation } from "expo-router";
-import { ScrollView, YStack, Text } from "tamagui";
-import React, { useEffect } from "react";
+import { ScrollView, YStack, XStack, Text, Spinner } from "tamagui";
+import React, { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { HeaderTabsProps } from "@/components/Shared/header/HeaderTabs";
 import { DeliveryLocation } from "@/components/Shared/DeliveryLocation";
 import { HomeCarousel } from "@/components/Screens/home/HomeCarousel";
 import { HomeSuggestions } from "@/components/Screens/home/HomeSuggestions";
 import DefaultButton from "@/components/DefaultButton";
-
+import { useAuth } from "@/context/AuthProvider";
+import { supabase } from "@/supabase";
+import { ProductDealCard } from "@/components/Screens/home/ProductDealsCard";
+import { Product } from "@/types/product";
 
 export default function Home() {
+  const { session, isLoading } = useAuth();
   const navigation = useNavigation();
-  const IS_LOGGED_IN = false;
+  
+  const [deals, setDeals] = useState<Product[]>([])
 
   const onClickAuth = () => router.push("/login")
 
@@ -24,24 +29,49 @@ export default function Home() {
     {
       title: "Prime",
       onPress: () => Alert.alert("Prime"),
-    //   active: false,
+      active: false,
     },
     {
       title: "Video",
       onPress: () => Alert.alert("Video"),
-    //   active: false,
+      active: false,
     },
   ];
 
+  const onProductPress = ({ id }: Product) => {
+    router.push(`/product/${id}`)
+  }
+
+  const getDeals = useCallback(async() => {
+    try {
+      const { data = [] } = await supabase.from("products").select("*")
+      setDeals(data as Product[]);
+    } catch (error) {
+      console.log('error', error)
+    }
+  }, [])
+
   useEffect(() => {
+    if (navigation) {
     navigation.setOptions({
       headerSearchShow: true,
       headerTabsProps: {
         tabs,
       },
     });
+  }
+
+  getDeals();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigation.setOptions]);
+  }, [navigation.setOptions, isLoading]);
+
+  if (isLoading) {
+    return (
+      <YStack f={1} ai="center" jc="center">
+        <Spinner size="large" />
+      </YStack>
+    );
+  }
 
   return (
     <>
@@ -58,11 +88,20 @@ export default function Home() {
           gap={20}
         >
           <Text als={"flex-start"} fos={20} fow={"bold"}>
-            {IS_LOGGED_IN ? "Deals for you" : "Sign in for your best experience"}
+            {session ? "Deals for you" : "Sign in for your best experience"}
           </Text>
-            {IS_LOGGED_IN ? (
+            {session ? (
               <>
               {/* TODO: Lists of Deals */}
+              <XStack gap={30} jc={"space-between"} fw={"wrap"}>
+                {deals.map((product) => (
+                  <ProductDealCard 
+                  key={product.id}
+                  product={product}
+                  onPress={() => onProductPress(product)}
+                  />
+                ))}
+              </XStack>
               </>
             ) : (
               <>
