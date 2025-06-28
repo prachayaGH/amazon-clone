@@ -44,7 +44,7 @@ export default function ProductScreen() {
   }, [id]);
 
   const onViewType = (viewType: "3D" | "AR") => {
-    router.push(`/product/${viewType}`);
+    router.push(`/product/${viewType}?modelUrl=${product?.model3DUrl}`);
   };
 
   const onSelectQuantity = (num: number) => {

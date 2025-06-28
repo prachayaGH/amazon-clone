@@ -13,8 +13,9 @@ module.exports = function (api) {
         },
       ],
 
-      // NOTE: this is only necessary if you are using reanimated for animations
-      'react-native-reanimated/plugin',
+      ['react-native-worklets-core/plugin', { processNestedWorklets: true }],
+
+      ['react-native-reanimated/plugin', { processNestedWorklets: true }],
     ],
   }
 }
